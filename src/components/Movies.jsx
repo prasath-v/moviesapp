@@ -4,7 +4,7 @@ import MovieCard from "./MovieCard"
 import axios from "axios";
 // import MoviesData from '../Utility/movieData';
 
-const Movies = ({watchListMovies, addToWatchlist, removeFromWatchlist}) => {
+const Movies = ({type, searchItem, watchListMovies, addToWatchlist, removeFromWatchlist}) => {
     const [movies, setMovies] = useState([]);
     const [pageNumber, setPageNumber] = useState(1);
 
@@ -26,21 +26,21 @@ const Movies = ({watchListMovies, addToWatchlist, removeFromWatchlist}) => {
     const getMovies = useCallback(
         async () => {
             try {
-                await axios.get(`https://api.themoviedb.org/3/movie/now_playing?api_key=04976ca4930e963cfb8f58852b77cffd&page=${pageNumber}&limit=30`)
+                let temp = await axios.get(`https://api.themoviedb.org/3/movie/now_playing?api_key=04976ca4930e963cfb8f58852b77cffd&page=${pageNumber}`);
                 
-                // search
-                // await axios.get(`https://api.themoviedb.org/3/search/movie?api_key=04976ca4930e963cfb8f58852b77cffd&page=${pageNumber}&query=thor`)
-
                 // trending - day | week 
-                // await axios.get(`https://api.themoviedb.org/3/trending/all/week?api_key=04976ca4930e963cfb8f58852b77cffd&page=${pageNumber}&limit=30`)
+                // await axios.get(`https://api.themoviedb.org/3/trending/all/week?api_key=04976ca4930e963cfb8f58852b77cffd&page=${pageNumber}`)
                 
                 // genre
                 // await axios.get(`https://api.themoviedb.org/3/discover/movie?api_key=04976ca4930e963cfb8f58852b77cffd&page=${pageNumber}&with_genres=36`)
 
-                .then((res) => {
+                setMovies(temp.data.results);
+                console.log(temp.data.results);
+
+                /* then((res) => {
                     setMovies(res.data.results);
                     console.log(res.data.results);
-                });
+                }); */
                 /* axios.get('https://search.imdbot.workers.dev/?q=speed')
                 .then((res) => {
                     setMovies(res.data.description);
@@ -66,7 +66,7 @@ const Movies = ({watchListMovies, addToWatchlist, removeFromWatchlist}) => {
 
             <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5'>
                 { movies?.map((movie) => {
-                    return <MovieCard movie={movie} key={movie.id} watchListMovies={watchListMovies} addToWatchlist={addToWatchlist} removeFromWatchlist={removeFromWatchlist} />
+                    return <MovieCard type={type} movie={movie} key={movie.id} watchListMovies={watchListMovies} addToWatchlist={addToWatchlist} removeFromWatchlist={removeFromWatchlist} />
                     // return <MovieCard movie={movie} key={movie["#IMDB_ID"]} watchListMovies={watchListMovies} addToWatchlist={addToWatchlist} removeFromWatchlist={removeFromWatchlist} />
                 })
                 }
@@ -83,9 +83,11 @@ const Movies = ({watchListMovies, addToWatchlist, removeFromWatchlist}) => {
 }
 
 Movies.propTypes = {
+    type: PropTypes.string,
+    searchItem: PropTypes.string,
     watchListMovies: PropTypes.array,
     addToWatchlist: PropTypes.func,
     removeFromWatchlist: PropTypes.func
-  }
+}
 
 export default Movies
